@@ -1,0 +1,22 @@
+node_modules/
+dist/
+*.local
+.DS_Store
+.env
+.env.*
+*.log
+
+# Lock files (bun)
+bun.lockb
+
+# Memory MCP runtime files
+memory.md
+memory/
+.memory.md.lock
+
+# Editor
+.vscode/
+.idea/
+
+# Tools
+tools/memory-mcp/node_modules/
