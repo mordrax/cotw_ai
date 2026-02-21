@@ -1,4 +1,5 @@
 import { loadAllAssets } from "@/assets/assetLoader";
+import { tileMetadataEditor } from "@/config/tile_metadata_editor";
 import Phaser from "phaser";
 
 const TITLE_COLOR = "#4a90d9";
@@ -62,6 +63,7 @@ export class BootScene extends Phaser.Scene {
   }
 
   create(): void {
+    // Note: tileMetadataEditor singleton is imported above and loads persisted tile metadata from localStorage
     this.scene.start("MainMenuScene");
   }
 }

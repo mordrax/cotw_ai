@@ -1,3 +1,4 @@
+import { gameSettings } from "@/config/game_settings";
 import Phaser from "phaser";
 
 const TITLE_COLOR = "#4a90d9";
@@ -17,10 +18,15 @@ export class MainMenuScene extends Phaser.Scene {
     const { width, height } = this.scale;
     const centerX = width / 2;
 
+    // Get dynamic font sizes
+    const titleSize = gameSettings.getFontSize(36);
+    const subtitleSize = gameSettings.getFontSize(16);
+    const buttonSize = gameSettings.getFontSize(18);
+
     // Title
     this.add
       .text(centerX, height * 0.3, "Castle of the Winds", {
-        fontSize: "36px",
+        fontSize: `${titleSize}px`,
         color: TITLE_COLOR,
         fontFamily: "Georgia, serif",
         fontStyle: "bold",
@@ -29,8 +35,8 @@ export class MainMenuScene extends Phaser.Scene {
 
     // Subtitle
     this.add
-      .text(centerX, height * 0.3 + 48, "Chapter 1: Quest for Vengeance", {
-        fontSize: "16px",
+      .text(centerX, height * 0.3 + gameSettings.getFontSize(48), "Chapter 1: Quest for Vengeance", {
+        fontSize: `${subtitleSize}px`,
         color: SUBTITLE_COLOR,
         fontFamily: "Georgia, serif",
       })
@@ -78,10 +84,11 @@ export class MainMenuScene extends Phaser.Scene {
   ): Phaser.GameObjects.Container {
     const paddingX = 24;
     const paddingY = 12;
+    const fontSize = gameSettings.getFontSize(18);
 
     const text = this.add
       .text(0, 0, label, {
-        fontSize: "18px",
+        fontSize: `${fontSize}px`,
         color: enabled ? BUTTON_TEXT_COLOR : BUTTON_TEXT_DISABLED,
         fontFamily: "Georgia, serif",
       })
@@ -169,26 +176,6 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   private openSettings(): void {
-    // Settings scene not yet implemented — show a brief toast
-    const { width, height } = this.scale;
-    const toast = this.add
-      .text(width / 2, height * 0.75, "Settings coming soon", {
-        fontSize: "14px",
-        color: "#aabbcc",
-        fontFamily: "Georgia, serif",
-        backgroundColor: "#1a2a3a",
-        padding: { x: 12, y: 6 },
-      })
-      .setOrigin(0.5)
-      .setAlpha(0);
-
-    this.tweens.add({
-      targets: toast,
-      alpha: 1,
-      duration: 200,
-      yoyo: true,
-      hold: 1500,
-      onComplete: () => toast.destroy(),
-    });
+    this.scene.start("SettingsScene");
   }
 }

@@ -6,7 +6,7 @@
 export interface TileMetadata {
   frame: number;
   name: string;
-  ascii?: string;
+  ascii?: string; // ASCII character from map files
   category: "terrain" | "structure" | "decorative" | "interactive" | "hazard" | "overlay";
   function: string;
   walkable: boolean;
@@ -22,7 +22,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     name: "Grass",
     ascii: ",",
     category: "terrain",
-    function: "Default walkable ground, basic terrain",
+    function: "Walkable grass terrain",
     walkable: true,
     collidable: false,
     passable: true,
@@ -31,7 +31,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
   1: {
     frame: 1,
     name: "Water",
-    ascii: "=",
+    ascii: "~",
     category: "terrain",
     function: "Impassable water body, blocks movement",
     walkable: false,
@@ -44,7 +44,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     name: "Stone Path",
     ascii: ".",
     category: "terrain",
-    function: "Village paths and roads, walkable terrain",
+    function: "Roads and paths, walkable terrain",
     walkable: true,
     collidable: false,
     passable: true,
@@ -55,7 +55,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     name: "Wall",
     ascii: "#",
     category: "structure",
-    function: "Building walls, blocks movement and line of sight",
+    function: "Building walls, blocks movement",
     walkable: false,
     collidable: true,
     passable: false,
@@ -64,9 +64,8 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
   4: {
     frame: 4,
     name: "Door",
-    ascii: "!",
     category: "structure",
-    function: "Entrance/exit point, can be opened or closed",
+    function: "Door entrance/exit, interactive",
     walkable: true,
     collidable: false,
     passable: true,
@@ -88,7 +87,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     name: "Stairs",
     ascii: "e",
     category: "structure",
-    function: "Dungeon entrance/exit, transitions between levels",
+    function: "Well entrance, transitions",
     walkable: true,
     collidable: false,
     passable: true,
@@ -99,7 +98,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     name: "Mountain",
     ascii: "^",
     category: "terrain",
-    function: "Outdoor rock obstacle, blocks movement",
+    function: "Rock obstacle, impassable",
     walkable: false,
     collidable: true,
     passable: false,
@@ -118,6 +117,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
   9: {
     frame: 9,
     name: "Cave Wall",
+    ascii: "d",
     category: "structure",
     function: "Dungeon wall, blocks movement",
     walkable: false,
@@ -138,8 +138,9 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
   11: {
     frame: 11,
     name: "Light Stone",
+    ascii: "D",
     category: "terrain",
-    function: "Lit dungeon floor, walkable terrain with visibility",
+    function: "Lit dungeon floor, walkable with visibility",
     walkable: true,
     collidable: false,
     passable: true,
@@ -148,6 +149,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
   12: {
     frame: 12,
     name: "Tall Grass",
+    ascii: "g",
     category: "terrain",
     function: "Dense vegetation, walkable but slow",
     walkable: true,
@@ -158,6 +160,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
   13: {
     frame: 13,
     name: "Marsh",
+    ascii: "w",
     category: "terrain",
     function: "Swampy terrain, slow movement",
     walkable: true,
@@ -168,6 +171,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
   14: {
     frame: 14,
     name: "Sand",
+    ascii: "c",
     category: "terrain",
     function: "Desert terrain, normal movement",
     walkable: true,
@@ -217,8 +221,9 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
   19: {
     frame: 19,
     name: "Crop",
+    ascii: "=",
     category: "decorative",
-    function: "Farm crops, village decoration",
+    function: "Farm crops, village borders",
     walkable: true,
     collidable: false,
     passable: true,
@@ -309,6 +314,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
   29: {
     frame: 29,
     name: "Signpost",
+    ascii: "!",
     category: "decorative",
     function: "Directional marker, navigation aid",
     walkable: true,
@@ -418,6 +424,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
   40: {
     frame: 40,
     name: "Stairs Down",
+    ascii: ">",
     category: "structure",
     function: "Dungeon descent, transitions to next level",
     walkable: true,
@@ -428,6 +435,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
   41: {
     frame: 41,
     name: "Stairs Up",
+    ascii: "<",
     category: "structure",
     function: "Dungeon ascent, transitions to previous level",
     walkable: true,

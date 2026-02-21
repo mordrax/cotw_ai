@@ -10,6 +10,7 @@ const steps = [
   { name: "typecheck", cmd: ["bun", "x", "tsc", "--noEmit"] },
   { name: "lint", cmd: ["bun", "x", "biome", "check", "src/", "tests/"] },
   { name: "test", cmd: ["bun", "x", "vitest", "run"] },
+  { name: "e2e", cmd: ["bunx", "playwright", "test", "--reporter=list"] },
 ] as const;
 
 interface StepResult {

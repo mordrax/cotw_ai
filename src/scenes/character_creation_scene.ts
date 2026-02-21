@@ -1,3 +1,4 @@
+import { createSceneLayout } from "@/ui/scene_layout";
 import Phaser from "phaser";
 import { getAttributeDescription } from "../data/attribute_descriptions";
 
@@ -55,6 +56,7 @@ export class CharacterCreationScene extends Phaser.Scene {
   private difficultyButtons!: Record<Difficulty, { bg: Phaser.GameObjects.Rectangle; text: Phaser.GameObjects.Text }>;
   private nameInput!: HTMLInputElement;
   private sliderDragging = false;
+  private contentY = 0;
 
   constructor() {
     super({ key: "CharacterCreationScene" });
@@ -64,39 +66,39 @@ export class CharacterCreationScene extends Phaser.Scene {
     const { width } = this.scale;
     const cx = width / 2;
 
-    // Title
-    this.add
-      .text(cx, 28, "Castle of the Winds", {
-        fontSize: "24px",
-        color: TITLE_COLOR,
-        fontFamily: "Georgia, serif",
-        fontStyle: "bold",
-      })
-      .setOrigin(0.5);
+    const layout = createSceneLayout(this);
+    layout.menuBar.addTitle("Castle of the Winds", {
+      color: TITLE_COLOR,
+      fontFamily: "Georgia, serif",
+      fontStyle: "bold",
+    });
+    layout.menuBar.addBackButton(() => this.cancelCreation(), "Cancel");
 
-    this.add
-      .text(cx, 54, "Chapter 1: Quest for Vengeance", {
-        fontSize: "12px",
-        color: SUBTITLE_COLOR,
-        fontFamily: "Georgia, serif",
-      })
-      .setOrigin(0.5);
+    // Add subtitle as a bar control
+    const subtitle = this.add.text(0, 0, "Chapter 1: Quest for Vengeance", {
+      fontSize: "12px",
+      color: SUBTITLE_COLOR,
+      fontFamily: "Georgia, serif",
+    });
+    layout.menuBar.addControl(subtitle, "left", 16);
+
+    this.contentY = layout.contentBounds.y;
 
     // Name input
-    this.createNameInput(cx, 88);
+    this.createNameInput(cx, this.contentY + 20);
 
     // Attributes section
-    this.createAttributeSection(cx, 128);
+    this.createAttributeSection(cx, this.contentY + 60);
 
     // Gender + Difficulty row
-    this.createGenderSection(200, 370);
-    this.createDifficultySection(520, 370);
+    this.createGenderSection(200, this.contentY + 300);
+    this.createDifficultySection(520, this.contentY + 300);
 
     // Derived stats
-    this.createDerivedStats(cx, 460);
+    this.createDerivedStats(cx, this.contentY + 390);
 
-    // Buttons
-    this.createActionButtons(cx, 530);
+    // Begin Adventure button
+    this.createButton(cx, this.contentY + 460, "Begin Adventure", true, () => this.beginAdventure());
   }
 
   // --- Name Input (DOM-based) ---
@@ -269,7 +271,7 @@ export class CharacterCreationScene extends Phaser.Scene {
       }
     });
 
-    // Ensure thumb is on top for input events (above trackHitArea)
+    // Ensure thumb is on top for input events
     thumb.setDepth(1);
 
     // Click on track to jump to value
@@ -385,7 +387,7 @@ export class CharacterCreationScene extends Phaser.Scene {
 
   private createDerivedStats(cx: number, y: number): void {
     this.add
-      .text(cx, y, "─── Derived Stats ───", {
+      .text(cx, y, "\u2500\u2500\u2500 Derived Stats \u2500\u2500\u2500", {
         fontSize: "12px",
         color: DIM_COLOR,
         fontFamily: "Georgia, serif",
@@ -435,11 +437,6 @@ export class CharacterCreationScene extends Phaser.Scene {
 
   // --- Action Buttons ---
 
-  private createActionButtons(cx: number, y: number): void {
-    this.createButton(cx - 100, y, "Begin Adventure", true, () => this.beginAdventure());
-    this.createButton(cx + 100, y, "Cancel", true, () => this.scene.start("MainMenuScene"));
-  }
-
   private createButton(x: number, y: number, label: string, _enabled: boolean, action: () => void): void {
     const text = this.add
       .text(0, 0, label, { fontSize: "16px", color: LABEL_COLOR, fontFamily: "Georgia, serif" })
@@ -463,6 +460,13 @@ export class CharacterCreationScene extends Phaser.Scene {
       bg.setStrokeStyle(1, 0x4a6a9c);
     });
     container.on("pointerup", action);
+  }
+
+  private cancelCreation(): void {
+    if (this.nameInput.parentNode) {
+      this.nameInput.parentNode.removeChild(this.nameInput);
+    }
+    this.scene.start("MainMenuScene");
   }
 
   private beginAdventure(): void {
