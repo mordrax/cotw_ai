@@ -17,7 +17,8 @@
   },
   "dependencies": {
     "bitecs": "^0.3.40",
-    "phaser": "^3.87.0"
+    "phaser": "^3.87.0",
+    "phaser3-rex-plugins": "^1.80.18"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

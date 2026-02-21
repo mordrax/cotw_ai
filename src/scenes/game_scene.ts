@@ -1,5 +1,7 @@
 import { type IWorld, createWorld } from "bitecs";
 import Phaser from "phaser";
+import { createPlayer } from "../entities/player";
+import { inputSystem, interactionSystem } from "../systems";
 
 export class GameScene extends Phaser.Scene {
   private world!: IWorld;
@@ -10,6 +12,9 @@ export class GameScene extends Phaser.Scene {
 
   create(): void {
     this.world = createWorld();
+
+    // Create player entity
+    createPlayer(this.world, 400, 300);
 
     this.add
       .text(400, 280, "Castle of the Winds", {
@@ -29,6 +34,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(_time: number, _delta: number): void {
-    // ECS systems will run here
+    // Input must run first to sample keyboard state
+    inputSystem(this.world, this);
+    interactionSystem(this.world, this);
   }
 }

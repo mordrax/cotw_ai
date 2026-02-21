@@ -1,5 +1,6 @@
 import { type IWorld, addComponent, addEntity } from "bitecs";
 import { Health } from "../components/health";
+import { Input } from "../components/input";
 import { Position } from "../components/position";
 import { Sprite } from "../components/sprite";
 
@@ -16,6 +17,14 @@ export function createPlayer(world: IWorld, x: number, y: number): number {
 
   addComponent(world, Sprite, eid);
   Sprite.tileIndex[eid] = 0;
+
+  addComponent(world, Input, eid);
+  Input.dx[eid] = 0;
+  Input.dy[eid] = 0;
+  Input.isInteract[eid] = 0;
+  Input.isInventory[eid] = 0;
+  Input.isMagic[eid] = 0;
+  Input.isWait[eid] = 0;
 
   return eid;
 }
