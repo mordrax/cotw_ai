@@ -10,12 +10,12 @@ dist/
 bun.lockb
 
 # Memory MCP runtime files
-memory.md
-memory/
 .memory.md.lock
 
-# Exception: Memory.md (task log) is version-controlled for team reference
-!Memory.md
+# Exception: memory.md (task log) is version-controlled for team reference
+# memory/ folder stays ignored (runtime detail files)
+!memory.md
+memory/
 
 # Editor
 .vscode/
