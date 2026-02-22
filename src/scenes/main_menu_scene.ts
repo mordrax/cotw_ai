@@ -46,11 +46,16 @@ export class MainMenuScene extends Phaser.Scene {
     const buttonY = height * 0.58;
     const buttonSpacing = 130;
     const buttons = [
-      { label: "New Game", enabled: true, action: () => this.startNewGame() },
-      { label: "Load Game", enabled: false, action: () => {} },
-      { label: "View Map", enabled: true, action: () => this.viewMap() },
-      { label: "View Sprites", enabled: true, action: () => this.viewSprites() },
-      { label: "Settings", enabled: true, action: () => this.openSettings() },
+      { label: "New Game", enabled: true, action: () => this.startNewGame(), testId: "main-menu-button-new-game" },
+      { label: "Load Game", enabled: false, action: () => {}, testId: "main-menu-button-load-game" },
+      { label: "View Map", enabled: true, action: () => this.viewMap(), testId: "main-menu-button-view-map" },
+      {
+        label: "View Sprites",
+        enabled: true,
+        action: () => this.viewSprites(),
+        testId: "main-menu-button-view-sprites",
+      },
+      { label: "Settings", enabled: true, action: () => this.openSettings(), testId: "main-menu-button-settings" },
     ];
 
     const totalWidth = (buttons.length - 1) * buttonSpacing;
@@ -59,7 +64,7 @@ export class MainMenuScene extends Phaser.Scene {
     for (let i = 0; i < buttons.length; i++) {
       const btn = buttons[i];
       const x = startX + i * buttonSpacing;
-      this.createButton(x, buttonY, btn.label, btn.enabled, btn.action);
+      this.createButton(x, buttonY, btn.label, btn.enabled, btn.action, btn.testId);
     }
 
     // "Load Game" hint
@@ -81,6 +86,7 @@ export class MainMenuScene extends Phaser.Scene {
     label: string,
     enabled: boolean,
     action: () => void,
+    testId = "",
   ): Phaser.GameObjects.Container {
     const paddingX = 24;
     const paddingY = 12;
@@ -102,6 +108,9 @@ export class MainMenuScene extends Phaser.Scene {
 
     const container = this.add.container(x, y, [bg, text]);
     container.setSize(bgWidth, bgHeight);
+    if (testId) {
+      container.setData("testId", testId);
+    }
 
     if (enabled) {
       container.setInteractive({ useHandCursor: true });

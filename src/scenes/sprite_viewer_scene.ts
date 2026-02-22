@@ -28,6 +28,10 @@ export class SpriteViewerScene extends Phaser.Scene {
     this.layout.menuBar.addBackButton(() => this.scene.start("MainMenuScene"));
     this.buildTabButtons();
     this.switchTab("tiles");
+
+    // Clean up HTML inputs when scene shuts down
+    this.events.on("shutdown", () => this.destroyMetadataPanel());
+    this.events.on("sleep", () => this.destroyMetadataPanel());
   }
 
   private buildTabButtons(): void {
@@ -45,6 +49,7 @@ export class SpriteViewerScene extends Phaser.Scene {
         .setInteractive({ useHandCursor: true })
         .on("pointerup", () => this.switchTab(key));
 
+      btn.setData("testId", `sprite-viewer-tab-${key}`);
       this.layout.menuBar.addControl(btn, "left", 12);
       this.tabButtons.set(key, btn);
     }
@@ -80,7 +85,7 @@ export class SpriteViewerScene extends Phaser.Scene {
     };
 
     const columnsMap: Record<TabKey, number> = {
-      tiles: 5,
+      tiles: 10,
       monsters: 7,
       items: 5,
       buildings: 11,
@@ -106,17 +111,18 @@ export class SpriteViewerScene extends Phaser.Scene {
     container: Phaser.GameObjects.Container,
     textureKey: string,
     columns: number,
-    _availableWidth: number,
+    availableWidth: number,
   ): void {
     const texture = this.textures.get(textureKey);
     const frames = Object.values(texture.frames).filter((f) => f.name !== "__BASE");
-    const startX = 60;
+    const startX = 30;
     const startY = 20;
+    const tileSpacing = (availableWidth - startX * 2) / columns;
 
     frames.forEach((frame, index) => {
       const col = index % columns;
       const row = Math.floor(index / columns);
-      const x = startX + col * 72;
+      const x = startX + col * tileSpacing + tileSpacing / 2;
       const y = startY + row * 72;
 
       const sprite = this.add.sprite(x, y, textureKey, frame.name);
@@ -136,6 +142,7 @@ export class SpriteViewerScene extends Phaser.Scene {
 
       sprite
         .setInteractive()
+        .setData("testId", `sprite-viewer-sprite-${index}`)
         .on("pointerover", () => label.setAlpha(1))
         .on("pointerout", () => label.setAlpha(0))
         .on("pointerup", () => {
@@ -225,6 +232,8 @@ export class SpriteViewerScene extends Phaser.Scene {
       yOffset + 20,
       panelWidth - 20,
       customMetadata?.name || metadata.name,
+      1,
+      "sprite-viewer-input-name",
     );
 
     yOffset += 65;
@@ -242,6 +251,7 @@ export class SpriteViewerScene extends Phaser.Scene {
       panelWidth - 20,
       customMetadata?.ascii || metadata.ascii || "",
       1,
+      "sprite-viewer-input-ascii",
     );
 
     yOffset += 65;
@@ -258,6 +268,8 @@ export class SpriteViewerScene extends Phaser.Scene {
       yOffset + 20,
       panelWidth - 20,
       customMetadata?.category || metadata.category,
+      1,
+      "sprite-viewer-input-category",
     );
 
     yOffset += 65;
@@ -275,6 +287,7 @@ export class SpriteViewerScene extends Phaser.Scene {
       panelWidth - 20,
       customMetadata?.function || metadata.function,
       3,
+      "sprite-viewer-input-function",
     );
 
     yOffset += 110;
@@ -283,21 +296,35 @@ export class SpriteViewerScene extends Phaser.Scene {
     const buttonY = panelY + panelHeight - 50;
     const buttonSpacing = panelWidth / 2 - 10;
 
-    this.createPanelButton(panelX + 10, buttonY, "Save", "#88ff88", () => {
-      const newMetadata = {
-        name: nameInput.value,
-        ascii: asciiInput.value,
-        category: categoryInput.value,
-        function: functionInput.value,
-      };
-      tileMetadataEditor.updateMetadata(frameIndex, newMetadata);
-      this.showMetadataPanel(frameIndex);
-    });
+    const saveButton = this.createPanelButton(
+      panelX + 10,
+      buttonY,
+      "Save",
+      "#88ff88",
+      "sprite-viewer-button-save",
+      () => {
+        const newMetadata = {
+          name: nameInput.value,
+          ascii: asciiInput.value,
+          category: categoryInput.value,
+          function: functionInput.value,
+        };
+        tileMetadataEditor.updateMetadata(frameIndex, newMetadata);
+        this.showMetadataPanel(frameIndex);
+      },
+    );
 
-    this.createPanelButton(panelX + buttonSpacing, buttonY, "Reset", "#ff8888", () => {
-      tileMetadataEditor.resetMetadata(frameIndex);
-      this.showMetadataPanel(frameIndex);
-    });
+    const resetButton = this.createPanelButton(
+      panelX + buttonSpacing,
+      buttonY,
+      "Reset",
+      "#ff8888",
+      "sprite-viewer-button-reset",
+      () => {
+        tileMetadataEditor.resetMetadata(frameIndex);
+        this.showMetadataPanel(frameIndex);
+      },
+    );
 
     this.metadataPanel = this.add.container(0, 0, [
       panelBg,
@@ -306,6 +333,8 @@ export class SpriteViewerScene extends Phaser.Scene {
       asciiLabel,
       categoryLabel,
       functionLabel,
+      saveButton,
+      resetButton,
     ]);
   }
 
@@ -318,6 +347,7 @@ export class SpriteViewerScene extends Phaser.Scene {
     width: number,
     initialValue: string,
     lines = 1,
+    testId = "",
   ): HTMLInputElement | HTMLTextAreaElement {
     const canvas = this.game.canvas;
     const canvasRect = canvas.getBoundingClientRect();
@@ -334,6 +364,9 @@ export class SpriteViewerScene extends Phaser.Scene {
 
     inputElement.value = initialValue;
     inputElement.setAttribute("data-sprite-viewer", "true");
+    if (testId) {
+      inputElement.id = testId;
+    }
     inputElement.style.position = "absolute";
     inputElement.style.fontSize = "12px";
     inputElement.style.padding = "6px";
@@ -357,14 +390,22 @@ export class SpriteViewerScene extends Phaser.Scene {
   /**
    * Create a button in the metadata panel
    */
-  private createPanelButton(x: number, y: number, label: string, color: string, action: () => void): void {
-    this.add
+  private createPanelButton(
+    x: number,
+    y: number,
+    label: string,
+    color: string,
+    testId: string,
+    action: () => void,
+  ): Phaser.GameObjects.Text {
+    return this.add
       .text(x, y, `[ ${label} ]`, {
         fontSize: "12px",
         color,
         fontFamily: "Arial",
       })
       .setOrigin(0, 0)
+      .setData("testId", testId)
       .setInteractive({ useHandCursor: true })
       .on("pointerup", action);
   }

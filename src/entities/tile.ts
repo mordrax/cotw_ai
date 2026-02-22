@@ -1,7 +1,10 @@
 /**
  * Tile Entity and Metadata
  * Defines all tile types in Castle of the Winds with their properties and functions
+ * Integrates with cotwelm tile type classifications
  */
+
+import { TileType } from "@/config/tile_types";
 
 export interface TileMetadata {
   frame: number;
@@ -12,6 +15,7 @@ export interface TileMetadata {
   walkable: boolean;
   collidable: boolean;
   passable: boolean;
+  tileType?: TileType; // Reference to cotwelm tile classification
   properties?: Record<string, unknown>;
 }
 
@@ -26,6 +30,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.Grass,
     properties: { isDefault: true, movementSpeed: 1.0 },
   },
   1: {
@@ -37,6 +42,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: false,
     collidable: true,
     passable: false,
+    tileType: TileType.Water,
     properties: { damageOnContact: false },
   },
   2: {
@@ -48,6 +54,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.Path,
     properties: { isPath: true },
   },
   3: {
@@ -59,6 +66,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: false,
     collidable: true,
     passable: false,
+    tileType: TileType.Rock,
     properties: { isBuilding: true },
   },
   4: {
@@ -69,6 +77,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.DoorClosed,
     properties: { isInteractive: true, hasState: true, states: ["open", "closed", "broken"] },
   },
   5: {
@@ -80,6 +89,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: false,
     collidable: true,
     passable: false,
+    tileType: TileType.PathGrass,
     properties: { isBarrier: true, isDecorative: true },
   },
   6: {
@@ -91,6 +101,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.Well,
     properties: { isTransition: true, transitionType: "levelChange" },
   },
   7: {
@@ -102,6 +113,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: false,
     collidable: true,
     passable: false,
+    tileType: TileType.Rock,
     properties: { isObstacle: true },
   },
   8: {
@@ -112,6 +124,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.DarkDgn,
     properties: { isUnderground: true },
   },
   9: {
@@ -123,6 +136,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: false,
     collidable: true,
     passable: false,
+    tileType: TileType.WallDarkDgn,
     properties: { isUnderground: true },
   },
   10: {
@@ -133,6 +147,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.DarkDgn,
     properties: { isDungeon: true },
   },
   11: {
@@ -144,6 +159,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.LitDgn,
     properties: { isDungeon: true, isLit: true },
   },
   12: {
@@ -155,6 +171,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.Grass50Cave50,
     properties: { movementSpeed: 0.7 },
   },
   13: {
@@ -166,6 +183,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.WaterGrass,
     properties: { movementSpeed: 0.5 },
   },
   14: {
@@ -177,6 +195,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.White50Cave50,
     properties: {},
   },
   15: {
@@ -187,6 +206,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.Grass10Cave90,
     properties: { movementSpeed: 0.7 },
   },
 
@@ -227,6 +247,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.Crop,
   },
   20: {
     frame: 20,
@@ -236,6 +257,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.Fountain,
   },
   21: {
     frame: 21,
@@ -245,6 +267,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.Well,
   },
   22: {
     frame: 22,
@@ -254,6 +277,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.Altar,
   },
   23: {
     frame: 23,
@@ -263,6 +287,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.Throne,
   },
   24: {
     frame: 24,
@@ -320,6 +345,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.Sign,
   },
   30: {
     frame: 30,
@@ -379,6 +405,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.Ashes,
   },
   36: {
     frame: 36,
@@ -430,6 +457,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.StairsDown,
     properties: { isTransition: true, direction: "down" },
   },
   41: {
@@ -441,6 +469,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.StairsUp,
     properties: { isTransition: true, direction: "up" },
   },
   42: {
@@ -481,6 +510,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.DoorOpen,
     properties: { isDoor: true, state: "open" },
   },
   46: {
@@ -491,6 +521,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: false,
     collidable: true,
     passable: false,
+    tileType: TileType.DoorClosed,
     properties: { isDoor: true, state: "closed" },
   },
   47: {
@@ -501,6 +532,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.DoorBroken,
     properties: { isDoor: true, state: "broken" },
   },
   48: {
@@ -511,6 +543,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: false,
     collidable: true,
     passable: false,
+    tileType: TileType.PortcullisClosed,
     properties: { isGate: true },
   },
   49: {
@@ -521,6 +554,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: false,
     collidable: true,
     passable: false,
+    tileType: TileType.PortcullisClosed,
     properties: { isGate: true, isTrap: true },
   },
 
@@ -533,6 +567,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.MineEntrance,
     properties: { isTransition: true },
   },
   51: {
@@ -543,6 +578,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: false,
     collidable: true,
     passable: false,
+    tileType: TileType.WallDarkDgn,
   },
   52: {
     frame: 52,
@@ -662,6 +698,7 @@ export const TILES_METADATA: Record<number, TileMetadata> = {
     walkable: true,
     collidable: false,
     passable: true,
+    tileType: TileType.TreasurePile,
     properties: { isMarker: true },
   },
   64: {

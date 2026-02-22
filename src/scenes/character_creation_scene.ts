@@ -98,7 +98,18 @@ export class CharacterCreationScene extends Phaser.Scene {
     this.createDerivedStats(cx, this.contentY + 390);
 
     // Begin Adventure button
-    this.createButton(cx, this.contentY + 460, "Begin Adventure", true, () => this.beginAdventure());
+    this.createButton(
+      cx,
+      this.contentY + 460,
+      "Begin Adventure",
+      true,
+      () => this.beginAdventure(),
+      "character-creation-button-begin-adventure",
+    );
+
+    // Clean up DOM input when scene shuts down
+    this.events.on("shutdown", () => this.cleanupNameInput());
+    this.events.on("sleep", () => this.cleanupNameInput());
   }
 
   // --- Name Input (DOM-based) ---
@@ -113,6 +124,7 @@ export class CharacterCreationScene extends Phaser.Scene {
       .setOrigin(0, 0.5);
 
     this.nameInput = document.createElement("input");
+    this.nameInput.id = "character-creation-input-name";
     this.nameInput.type = "text";
     this.nameInput.value = this.playerName;
     this.nameInput.placeholder = "What did your mother utter as you came into this world?";
@@ -190,6 +202,7 @@ export class CharacterCreationScene extends Phaser.Scene {
     // Thumb
     const thumbX = trackX + barWidth * (this.attributes[attr] / 100);
     const thumb = this.add.circle(thumbX, trackY, 10, SLIDER_THUMB);
+    thumb.setData("testId", `character-creation-slider-${attr}-thumb`);
     thumb.setInteractive({ useHandCursor: true });
 
     // Value text
@@ -276,6 +289,7 @@ export class CharacterCreationScene extends Phaser.Scene {
 
     // Click on track to jump to value
     const trackHitArea = this.add.rectangle(trackX + barWidth / 2, trackY, barWidth, 24, 0x000000, 0);
+    trackHitArea.setData("testId", `character-creation-slider-${attr}-track`);
     trackHitArea.setInteractive({ useHandCursor: true });
     trackHitArea.on("pointerup", (pointer: Phaser.Input.Pointer) => {
       if (this.sliderDragging) return;
@@ -437,7 +451,7 @@ export class CharacterCreationScene extends Phaser.Scene {
 
   // --- Action Buttons ---
 
-  private createButton(x: number, y: number, label: string, _enabled: boolean, action: () => void): void {
+  private createButton(x: number, y: number, label: string, _enabled: boolean, action: () => void, testId = ""): void {
     const text = this.add
       .text(0, 0, label, { fontSize: "16px", color: LABEL_COLOR, fontFamily: "Georgia, serif" })
       .setOrigin(0.5);
@@ -449,6 +463,9 @@ export class CharacterCreationScene extends Phaser.Scene {
 
     const container = this.add.container(x, y, [bg, text]);
     container.setSize(w, h);
+    if (testId) {
+      container.setData("testId", testId);
+    }
     container.setInteractive({ useHandCursor: true });
 
     container.on("pointerover", () => {
@@ -462,10 +479,14 @@ export class CharacterCreationScene extends Phaser.Scene {
     container.on("pointerup", action);
   }
 
-  private cancelCreation(): void {
-    if (this.nameInput.parentNode) {
+  private cleanupNameInput(): void {
+    if (this.nameInput?.parentNode) {
       this.nameInput.parentNode.removeChild(this.nameInput);
     }
+  }
+
+  private cancelCreation(): void {
+    this.cleanupNameInput();
     this.scene.start("MainMenuScene");
   }
 
@@ -477,11 +498,7 @@ export class CharacterCreationScene extends Phaser.Scene {
       attributes: { ...this.attributes },
     };
 
-    // Clean up DOM input
-    if (this.nameInput.parentNode) {
-      this.nameInput.parentNode.removeChild(this.nameInput);
-    }
-
+    this.cleanupNameInput();
     this.scene.start("MapViewScene", { character: config });
   }
 }
