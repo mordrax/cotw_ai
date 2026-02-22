@@ -26,6 +26,17 @@ export class SpriteViewerScene extends Phaser.Scene {
     this.layout = createSceneLayout(this);
     this.layout.menuBar.addTitle("Sprite Viewer");
     this.layout.menuBar.addBackButton(() => this.scene.start("MainMenuScene"));
+
+    // Map view hotkey
+    const mapViewHotkey = this.add.text(0, 0, "[M] Map View", {
+      fontSize: "12px",
+      color: "#8899bb",
+      fontFamily: "Arial",
+    });
+    this.layout.menuBar.addControl(mapViewHotkey, "right", 12);
+
+    this.input.keyboard?.on("keydown-M", () => this.scene.start("MapViewScene"));
+
     this.buildTabButtons();
     this.switchTab("tiles");
 

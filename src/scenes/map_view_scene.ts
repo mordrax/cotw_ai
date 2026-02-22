@@ -71,6 +71,14 @@ export class MapViewScene extends Phaser.Scene {
     });
     layout.menuBar.addControl(this.modeText, "left", 16);
 
+    // Sprite viewer hotkey
+    const spriteViewerHotkey = this.add.text(0, 0, "[S] Sprite Viewer", {
+      fontSize: "12px",
+      color: "#8899bb",
+      fontFamily: "Arial",
+    });
+    layout.menuBar.addControl(spriteViewerHotkey, "right", 12);
+
     this.contentY = layout.contentBounds.y;
 
     // Display initial map
@@ -78,6 +86,7 @@ export class MapViewScene extends Phaser.Scene {
 
     // Keyboard handlers
     this.input.keyboard?.on("keydown-T", () => this.toggleMapView());
+    this.input.keyboard?.on("keydown-S", () => this.scene.start("SpriteViewerScene"));
     this.input.keyboard?.on("keydown-ESC", () => this.scene.start("MainMenuScene"));
   }
 
